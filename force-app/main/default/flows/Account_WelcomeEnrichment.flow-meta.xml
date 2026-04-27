@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <environments>Default</environments>
+    <interviewLabel>Account Welcome Enrichment</interviewLabel>
+    <label>Account Welcome Enrichment</label>
+    <processType>AutoLaunchedFlow</processType>
+    <runInMode>SystemModeWithoutSharing</runInMode>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Set_Defaults</targetReference>
+        </connector>
+        <object>Account</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+    <assignments>
+        <name>Set_Defaults</name>
+        <label>Set Defaults</label>
+        <locationX>200</locationX>
+        <locationY>50</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Industry</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Coffee</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>$Record.Description</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Welcome to BerlinBrew</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+</Flow>

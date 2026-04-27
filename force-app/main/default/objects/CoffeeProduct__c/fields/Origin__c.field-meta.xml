@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Origin__c</fullName>
+    <label>Origin</label>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Ethiopia</fullName><default>false</default><label>Ethiopia</label></value>
+            <value><fullName>Colombia</fullName><default>false</default><label>Colombia</label></value>
+            <value><fullName>Kenya</fullName><default>false</default><label>Kenya</label></value>
+            <value><fullName>Guatemala</fullName><default>false</default><label>Guatemala</label></value>
+            <value><fullName>Brazil</fullName><default>false</default><label>Brazil</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

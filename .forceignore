@@ -1,0 +1,48 @@
+# BerlinBrew .forceignore
+#
+# Anything listed here is excluded from real-Salesforce deploys
+# (sf project deploy / sf project retrieve) but still part of the
+# project source for Nimbus.
+#
+# This file is one of the points of the demo: Nimbus can run code
+# that wouldn't deploy to your org without dependencies that don't
+# exist in your org. That's the whole reason fast local execution
+# matters in the first place.
+
+# ─── HopLog managed-package showcase ───────────────────────────────
+#
+# `Hoplog` is a fictional logging managed package. Its full surface —
+# Apex classes AND the namespaced custom object — lives under
+# `stubs/Hoplog/`, which `stubs/` (below) already excludes from sf
+# deploys. The Apex classes here that CALL into Hoplog must also be
+# excluded, because a real-org deploy would fail with "Variable does
+# not exist: Hoplog.Logger" since the package isn't installed.
+# Tests run cleanly on Nimbus via the `nimbus.stubs.namespaces=Hoplog`
+# declaration in nimbus.properties plus the local schema XML.
+force-app/main/default/classes/BrewAuditLogger.cls
+force-app/main/default/classes/BrewAuditLogger.cls-meta.xml
+force-app/main/default/classes/BrewAuditLoggerTest.cls
+force-app/main/default/classes/BrewAuditLoggerTest.cls-meta.xml
+force-app/main/default/classes/BrewAuditArchive.cls
+force-app/main/default/classes/BrewAuditArchive.cls-meta.xml
+force-app/main/default/classes/BrewAuditArchiveTest.cls
+force-app/main/default/classes/BrewAuditArchiveTest.cls-meta.xml
+
+# ─── Stubs directory ───────────────────────────────────────────────
+#
+# stubs/ contains test-only type definitions for managed packages
+# that don't exist in the test org — Apex classes AND namespaced
+# objects/fields. One folder per package: stubs/<Pkg>/. Never deployed.
+stubs/
+
+# ─── API-version mismatch demonstration ────────────────────────────
+#
+# BrewLegacyAuditLog deliberately uses System.Assert.areEqual (v56+)
+# while declaring apiVersion 52.0 in its meta.xml. Real Salesforce
+# would reject the deploy as a method-not-found error at the API
+# version mismatch. The whole point of this file is to demonstrate
+# Nimbus's API-version mismatch warning, which fires before deploy —
+# don't try to ship it.
+force-app/main/default/classes/BrewLegacyAuditLog.cls
+force-app/main/default/classes/BrewLegacyAuditLog.cls-meta.xml
+

@@ -1,0 +1,10 @@
+.nimbus/
+.sfdx/
+.sf/
+node_modules/
+.vscode/
+*.log
+.DS_Store
+
+# Internal-only material kept in a sibling directory
+demo/

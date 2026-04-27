@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>BrewWelcomeSubject</fullName>
+        <categories>Email</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Welcome email subject</shortDescription>
+        <value>Welcome to BerlinBrew — your first roast is on its way</value>
+    </labels>
+    <labels>
+        <fullName>BrewLoyaltyTierMessage</fullName>
+        <categories>Loyalty</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Loyalty tier graduation message</shortDescription>
+        <value>Congratulations — you've reached {0} status. New perks are unlocked.</value>
+    </labels>
+    <labels>
+        <fullName>BrewSupportSignoff</fullName>
+        <categories>Support</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Support email signoff</shortDescription>
+        <value>Cheers,
+The BerlinBrew Team</value>
+    </labels>
+</CustomLabels>
