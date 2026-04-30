@@ -5,7 +5,8 @@
 @IsTest
 private class BrewBulkScenarioTest {
 
-    @IsTest static void fullLifecycle_100_subscriptions() {
+    @IsTest
+    static void fullLifecycle_100_subscriptions() {
         List<Account> accts = BrewTestFactory.accounts(100);
         CoffeeProduct__c p = BrewTestFactory.product('BLEND-A', 15, 6);
         BrewTestFactory.batch(p.Id, 100.0);
@@ -35,7 +36,8 @@ private class BrewBulkScenarioTest {
         Assert.areEqual(100, points);
     }
 
-    @IsTest static void inventoryReservation_under_concurrentSubscriptions() {
+    @IsTest
+    static void inventoryReservation_under_concurrentSubscriptions() {
         CoffeeProduct__c p = BrewTestFactory.product('BLEND-B', 15, 6);
         BrewTestFactory.batch(p.Id, 10.0);
 
@@ -45,7 +47,8 @@ private class BrewBulkScenarioTest {
         Assert.areEqual(2.5, BrewInventoryService.availableStock(p.Id));
     }
 
-    @IsTest static void metricsReflect_bulkActivity() {
+    @IsTest
+    static void metricsReflect_bulkActivity() {
         List<Account> accts = BrewTestFactory.accounts(20);
         CoffeeProduct__c p = BrewTestFactory.product('BLEND-C', 20, 8);
         List<Subscription__c> subs = new List<Subscription__c>();
@@ -67,7 +70,8 @@ private class BrewBulkScenarioTest {
         Assert.areEqual(540, mrr.get('Quarterly'));
     }
 
-    @IsTest static void tierGraduation_afterMonthsOfActivity() {
+    @IsTest
+    static void tierGraduation_afterMonthsOfActivity() {
         Account a = BrewTestFactory.account('BigSpender');
         CoffeeProduct__c p = BrewTestFactory.product('BLEND-D', 60, 20);
         Subscription__c s = BrewSubscriptionService.activate(a.Id, p.Id, 'Monthly', Date.today());

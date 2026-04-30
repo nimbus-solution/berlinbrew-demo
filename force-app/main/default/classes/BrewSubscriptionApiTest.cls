@@ -12,7 +12,8 @@ private class BrewSubscriptionApiTest {
         RestContext.response = new RestResponse();
     }
 
-    @IsTest static void post_activatesSubscription_returns201() {
+    @IsTest
+    static void post_activatesSubscription_returns201() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 12.00, 5.00);
 
@@ -33,14 +34,16 @@ private class BrewSubscriptionApiTest {
         Assert.areEqual(Date.today().addMonths(1), (Date) out.get('nextDeliveryDate'));
     }
 
-    @IsTest static void post_missingBody_returns400() {
+    @IsTest
+    static void post_missingBody_returns400() {
         newRequest('POST', '/subscriptions', null);
         Map<String, Object> out = BrewSubscriptionApi.activate();
         Assert.areEqual(400, RestContext.response.statusCode);
         Assert.areEqual('Request body is required', (String) out.get('message'));
     }
 
-    @IsTest static void post_creditHold_returns400_withMessage() {
+    @IsTest
+    static void post_creditHold_returns400_withMessage() {
         Account a = BrewTestFactory.account('A');
         a.OnCreditHold__c = true;
         update a;
@@ -58,7 +61,8 @@ private class BrewSubscriptionApiTest {
         Assert.isTrue(((String) out.get('message')).contains('credit hold'));
     }
 
-    @IsTest static void get_returnsSubscription() {
+    @IsTest
+    static void get_returnsSubscription() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Weekly');
@@ -70,14 +74,16 @@ private class BrewSubscriptionApiTest {
         Assert.areEqual('Weekly', (String) out.get('cadence'));
     }
 
-    @IsTest static void get_missingId_returns400() {
+    @IsTest
+    static void get_missingId_returns400() {
         newRequest('GET', '/subscriptions/', null);
         Map<String, Object> out = BrewSubscriptionApi.fetch();
         Assert.areEqual(400, RestContext.response.statusCode);
         Assert.areEqual('Subscription Id is required', (String) out.get('message'));
     }
 
-    @IsTest static void get_unknownId_returns404() {
+    @IsTest
+    static void get_unknownId_returns404() {
         Id fake = '0010000000000000AAA';
         newRequest('GET', '/subscriptions/' + fake, null);
         Map<String, Object> out = BrewSubscriptionApi.fetch();
@@ -85,7 +91,8 @@ private class BrewSubscriptionApiTest {
         Assert.areEqual('Not found', (String) out.get('message'));
     }
 
-    @IsTest static void patch_pause_setsStatusPaused() {
+    @IsTest
+    static void patch_pause_setsStatusPaused() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -95,7 +102,8 @@ private class BrewSubscriptionApiTest {
         Assert.areEqual('Paused', (String) out.get('status'));
     }
 
-    @IsTest static void patch_resume_updatesNextDelivery() {
+    @IsTest
+    static void patch_resume_updatesNextDelivery() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Weekly');
@@ -110,7 +118,8 @@ private class BrewSubscriptionApiTest {
         Assert.areEqual(Date.newInstance(2026, 7, 8), (Date) out.get('nextDeliveryDate'));
     }
 
-    @IsTest static void patch_cancel_clearsNextDelivery() {
+    @IsTest
+    static void patch_cancel_clearsNextDelivery() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -124,7 +133,8 @@ private class BrewSubscriptionApiTest {
         Assert.areEqual(null, (Date) out.get('nextDeliveryDate'));
     }
 
-    @IsTest static void patch_unknownAction_returns400() {
+    @IsTest
+    static void patch_unknownAction_returns400() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -135,7 +145,8 @@ private class BrewSubscriptionApiTest {
         Assert.isTrue(((String) out.get('message')).contains('Unknown action'));
     }
 
-    @IsTest static void patch_missingAction_returns400() {
+    @IsTest
+    static void patch_missingAction_returns400() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -145,7 +156,8 @@ private class BrewSubscriptionApiTest {
         Assert.areEqual(400, RestContext.response.statusCode);
     }
 
-    @IsTest static void patch_resumeOnActive_returns400() {
+    @IsTest
+    static void patch_resumeOnActive_returns400() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');

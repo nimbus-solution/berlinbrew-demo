@@ -1,7 +1,8 @@
 @IsTest
 private class BrewSubscriptionServiceTest {
 
-    @IsTest static void activate_createsSubscription_withCorrectPrice() {
+    @IsTest
+    static void activate_createsSubscription_withCorrectPrice() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 12.00, 5.00);
         Subscription__c s = BrewSubscriptionService.activate(a.Id, p.Id, 'Monthly', Date.today());
@@ -13,14 +14,16 @@ private class BrewSubscriptionServiceTest {
         Assert.areEqual(Date.today().addMonths(1), out.NextDeliveryDate__c);
     }
 
-    @IsTest static void activate_quarterlyApplies10PercentDiscount() {
+    @IsTest
+    static void activate_quarterlyApplies10PercentDiscount() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10.00, 4.00);
         Subscription__c s = BrewSubscriptionService.activate(a.Id, p.Id, 'Quarterly', Date.today());
         Assert.areEqual(27.00, [SELECT MonthlyPrice__c FROM Subscription__c WHERE Id = :s.Id].MonthlyPrice__c);
     }
 
-    @IsTest static void activate_onCreditHold_throws() {
+    @IsTest
+    static void activate_onCreditHold_throws() {
         Account a = BrewTestFactory.account('A');
         a.OnCreditHold__c = true;
         update a;
@@ -33,7 +36,8 @@ private class BrewSubscriptionServiceTest {
         }
     }
 
-    @IsTest static void activate_inactiveProduct_throws() {
+    @IsTest
+    static void activate_inactiveProduct_throws() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         p.Active__c = false;
@@ -46,21 +50,25 @@ private class BrewSubscriptionServiceTest {
         }
     }
 
-    @IsTest static void nextDeliveryAfter_weekly_isPlus7() {
+    @IsTest
+    static void nextDeliveryAfter_weekly_isPlus7() {
         Assert.areEqual(Date.newInstance(2026, 5, 8),
             BrewSubscriptionService.nextDeliveryAfter(Date.newInstance(2026, 5, 1), 'Weekly'));
     }
 
-    @IsTest static void nextDeliveryAfter_monthly_handlesYearBoundary() {
+    @IsTest
+    static void nextDeliveryAfter_monthly_handlesYearBoundary() {
         Assert.areEqual(Date.newInstance(2027, 1, 15),
             BrewSubscriptionService.nextDeliveryAfter(Date.newInstance(2026, 12, 15), 'Monthly'));
     }
 
-    @IsTest static void nextDeliveryAfter_null_returnsNull() {
+    @IsTest
+    static void nextDeliveryAfter_null_returnsNull() {
         Assert.areEqual(null, BrewSubscriptionService.nextDeliveryAfter(null, 'Monthly'));
     }
 
-    @IsTest static void pause_activeSubscription_setsStatus() {
+    @IsTest
+    static void pause_activeSubscription_setsStatus() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -68,7 +76,8 @@ private class BrewSubscriptionServiceTest {
         Assert.areEqual('Paused', [SELECT Status__c FROM Subscription__c WHERE Id = :s.Id].Status__c);
     }
 
-    @IsTest static void pause_cancelledSubscription_throws() {
+    @IsTest
+    static void pause_cancelledSubscription_throws() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -81,7 +90,8 @@ private class BrewSubscriptionServiceTest {
         }
     }
 
-    @IsTest static void resume_pausedSubscription_updatesNextDelivery() {
+    @IsTest
+    static void resume_pausedSubscription_updatesNextDelivery() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Weekly');
@@ -93,7 +103,8 @@ private class BrewSubscriptionServiceTest {
         Assert.areEqual(resumeDate.addDays(7), out.NextDeliveryDate__c);
     }
 
-    @IsTest static void resume_activeSubscription_throws() {
+    @IsTest
+    static void resume_activeSubscription_throws() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Weekly');
@@ -105,7 +116,8 @@ private class BrewSubscriptionServiceTest {
         }
     }
 
-    @IsTest static void cancel_clearsNextDelivery() {
+    @IsTest
+    static void cancel_clearsNextDelivery() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -115,7 +127,8 @@ private class BrewSubscriptionServiceTest {
         Assert.areEqual(null, out.NextDeliveryDate__c);
     }
 
-    @IsTest static void dueForDelivery_returnsOnlyActive_withNextDeliveryOnOrBeforeAsOf() {
+    @IsTest
+    static void dueForDelivery_returnsOnlyActive_withNextDeliveryOnOrBeforeAsOf() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s1 = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -131,7 +144,8 @@ private class BrewSubscriptionServiceTest {
         Assert.areEqual(s1.Id, due[0].Id);
     }
 
-    @IsTest static void advanceDeliveries_updatesNext_andAwardsLoyalty() {
+    @IsTest
+    static void advanceDeliveries_updatesNext_andAwardsLoyalty() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 100, 40);
         Subscription__c s = BrewSubscriptionService.activate(a.Id, p.Id, 'Monthly', Date.today());
@@ -143,7 +157,8 @@ private class BrewSubscriptionServiceTest {
         Assert.areEqual(100, out.LoyaltyPoints__c);
     }
 
-    @IsTest static void advanceDeliveries_skipsNonActive() {
+    @IsTest
+    static void advanceDeliveries_skipsNonActive() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 50, 20);
         Subscription__c s = BrewSubscriptionService.activate(a.Id, p.Id, 'Monthly', Date.today());

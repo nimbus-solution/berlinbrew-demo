@@ -23,7 +23,8 @@ private class BrewFieldLevelSecurityTest {
         return u;
     }
 
-    @IsTest static void supportAgent_querying_withUserMode_cannotSeeWholesaleCost() {
+    @IsTest
+    static void supportAgent_querying_withUserMode_cannotSeeWholesaleCost() {
         insert new CoffeeProduct__c(Name = 'SKU-1', RetailPrice__c = 10, WholesaleCost__c = 4, Active__c = true);
         User agent = supportAgent();
         System.runAs(agent) {
@@ -33,7 +34,8 @@ private class BrewFieldLevelSecurityTest {
         }
     }
 
-    @IsTest static void supportAgent_canQueryRetailButCode_mustAvoidMargin() {
+    @IsTest
+    static void supportAgent_canQueryRetailButCode_mustAvoidMargin() {
         insert new CoffeeProduct__c(Name = 'SKU-1', RetailPrice__c = 10, WholesaleCost__c = 4, Active__c = true);
         User agent = supportAgent();
         System.runAs(agent) {
@@ -43,7 +45,8 @@ private class BrewFieldLevelSecurityTest {
         }
     }
 
-    @IsTest static void supportAgent_runningUnrestrictedQuery_stillSeesField() {
+    @IsTest
+    static void supportAgent_runningUnrestrictedQuery_stillSeesField() {
         insert new CoffeeProduct__c(Name = 'SKU-1', RetailPrice__c = 10, WholesaleCost__c = 4, Active__c = true);
         User agent = supportAgent();
         System.runAs(agent) {
@@ -55,7 +58,8 @@ private class BrewFieldLevelSecurityTest {
         }
     }
 
-    @IsTest static void admin_userMode_seesAllFields() {
+    @IsTest
+    static void admin_userMode_seesAllFields() {
         insert new CoffeeProduct__c(Name = 'SKU-1', RetailPrice__c = 10, WholesaleCost__c = 4, Active__c = true);
         List<CoffeeProduct__c> rows = [
             SELECT Id, Name, RetailPrice__c, WholesaleCost__c FROM CoffeeProduct__c WITH USER_MODE

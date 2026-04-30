@@ -21,7 +21,8 @@ private class BrewCustomerMetricsTest {
         insert subs;
     }
 
-    @IsTest static void byTier_rollsUpCorrectly() {
+    @IsTest
+    static void byTier_rollsUpCorrectly() {
         List<BrewCustomerMetrics.TierRollup> rows = BrewCustomerMetrics.byTier();
         Map<String, BrewCustomerMetrics.TierRollup> byTier = new Map<String, BrewCustomerMetrics.TierRollup>();
         for (BrewCustomerMetrics.TierRollup r : rows) byTier.put(r.tier, r);
@@ -31,13 +32,15 @@ private class BrewCustomerMetricsTest {
         Assert.areEqual(5000, byTier.get('Gold').totalLifetimeValue);
     }
 
-    @IsTest static void mrrByCadence_sumsActiveOnly() {
+    @IsTest
+    static void mrrByCadence_sumsActiveOnly() {
         Map<String, Decimal> mrr = BrewCustomerMetrics.monthlyRecurringRevenueByCadence();
         Assert.areEqual(30, mrr.get('Monthly'));
         Assert.areEqual(54, mrr.get('Quarterly'));
     }
 
-    @IsTest static void churnByCadence_producesRates() {
+    @IsTest
+    static void churnByCadence_producesRates() {
         List<BrewCustomerMetrics.ChurnMetric> rows = BrewCustomerMetrics.churnByCadence();
         Map<String, BrewCustomerMetrics.ChurnMetric> byC = new Map<String, BrewCustomerMetrics.ChurnMetric>();
         for (BrewCustomerMetrics.ChurnMetric m : rows) byC.put(m.cadence, m);
@@ -46,7 +49,8 @@ private class BrewCustomerMetricsTest {
         Assert.areEqual(40.00, byC.get('Monthly').churnRate);
     }
 
-    @IsTest static void totalLifetimeRevenue_sumsAll() {
+    @IsTest
+    static void totalLifetimeRevenue_sumsAll() {
         Assert.areEqual(5650, BrewCustomerMetrics.totalLifetimeRevenue());
     }
 }

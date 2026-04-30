@@ -32,7 +32,8 @@ private class BrewShippingCalloutTest {
         }
     }
 
-    @IsTest static void getRate_happyPath_parses() {
+    @IsTest
+    static void getRate_happyPath_parses() {
         Test.setMock(HttpCalloutMock.class, new OkMock());
         BrewShippingCallout.Quote q = BrewShippingCallout.getRate('10115', 0.25);
         Assert.areEqual(4.99, q.amount);
@@ -40,7 +41,8 @@ private class BrewShippingCalloutTest {
         Assert.areEqual(3, q.estimatedDays);
     }
 
-    @IsTest static void getRate_httpError_throws() {
+    @IsTest
+    static void getRate_httpError_throws() {
         Test.setMock(HttpCalloutMock.class, new Error500Mock());
         try {
             BrewShippingCallout.getRate('10115', 0.25);
@@ -50,7 +52,8 @@ private class BrewShippingCalloutTest {
         }
     }
 
-    @IsTest static void getRate_malformedResponse_throws() {
+    @IsTest
+    static void getRate_malformedResponse_throws() {
         Test.setMock(HttpCalloutMock.class, new MalformedMock());
         try {
             BrewShippingCallout.getRate('10115', 0.25);
@@ -60,7 +63,8 @@ private class BrewShippingCalloutTest {
         }
     }
 
-    @IsTest static void getRate_blankPostalCode_throws() {
+    @IsTest
+    static void getRate_blankPostalCode_throws() {
         try {
             BrewShippingCallout.getRate('', 0.25);
             Assert.fail();
@@ -69,7 +73,8 @@ private class BrewShippingCalloutTest {
         }
     }
 
-    @IsTest static void getRate_zeroWeight_throws() {
+    @IsTest
+    static void getRate_zeroWeight_throws() {
         try {
             BrewShippingCallout.getRate('10115', 0);
             Assert.fail();

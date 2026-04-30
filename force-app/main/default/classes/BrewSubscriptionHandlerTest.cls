@@ -1,7 +1,8 @@
 @IsTest
 private class BrewSubscriptionHandlerTest {
 
-    @IsTest static void beforeInsert_defaults_statusActive() {
+    @IsTest
+    static void beforeInsert_defaults_statusActive() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = new Subscription__c(Account__c = a.Id, Product__c = p.Id, Cadence__c = 'Monthly');
@@ -9,7 +10,8 @@ private class BrewSubscriptionHandlerTest {
         Assert.areEqual('Active', [SELECT Status__c FROM Subscription__c WHERE Id = :s.Id].Status__c);
     }
 
-    @IsTest static void beforeInsert_computesNextDelivery_fromStartDate() {
+    @IsTest
+    static void beforeInsert_computesNextDelivery_fromStartDate() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = new Subscription__c(
@@ -21,7 +23,8 @@ private class BrewSubscriptionHandlerTest {
             [SELECT NextDeliveryDate__c FROM Subscription__c WHERE Id = :s.Id].NextDeliveryDate__c);
     }
 
-    @IsTest static void beforeUpdate_cancelledToActive_blocked() {
+    @IsTest
+    static void beforeUpdate_cancelledToActive_blocked() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -37,7 +40,8 @@ private class BrewSubscriptionHandlerTest {
         }
     }
 
-    @IsTest static void beforeUpdate_cancelled_clearsNextDelivery() {
+    @IsTest
+    static void beforeUpdate_cancelled_clearsNextDelivery() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
@@ -47,7 +51,8 @@ private class BrewSubscriptionHandlerTest {
             [SELECT NextDeliveryDate__c FROM Subscription__c WHERE Id = :s.Id].NextDeliveryDate__c);
     }
 
-    @IsTest static void afterUpdate_advancingNextDelivery_bumpsAccountLtv() {
+    @IsTest
+    static void afterUpdate_advancingNextDelivery_bumpsAccountLtv() {
         Account a = BrewTestFactory.account('A');
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 25, 10);
         Subscription__c s = BrewSubscriptionService.activate(a.Id, p.Id, 'Monthly', Date.today());
