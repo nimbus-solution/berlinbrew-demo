@@ -14,7 +14,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Loyalty tier graduation message</shortDescription>
-        <value>Congratulations — you've reached {0} status. New perks are unlocked.</value>
+        <value>Congratulations — you''ve reached {0} status. New perks are unlocked.</value>
     </labels>
     <labels>
         <fullName>BrewSupportSignoff</fullName>
