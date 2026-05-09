@@ -12,6 +12,12 @@ private class BrewSubscriptionApiTest {
         RestContext.response = new RestResponse();
     }
 
+    private static Map<String, Object> readResponse() {
+        Blob b = RestContext.response.responseBody;
+        if (b == null) return null;
+        return (Map<String, Object>) JSON.deserializeUntyped(b.toString());
+    }
+
     @IsTest
     static void post_activatesSubscription_returns201() {
         Account a = BrewTestFactory.account('A');
@@ -25,19 +31,21 @@ private class BrewSubscriptionApiTest {
         };
         newRequest('POST', '/subscriptions', body);
 
-        Map<String, Object> out = BrewSubscriptionApi.activate();
+        BrewSubscriptionApi.activate();
+        Map<String, Object> out = readResponse();
 
         Assert.areEqual(201, RestContext.response.statusCode);
         Assert.isNotNull(out);
         Assert.areEqual('Active', (String) out.get('status'));
         Assert.areEqual(12.00, (Decimal) out.get('monthlyPrice'));
-        Assert.areEqual(Date.today().addMonths(1), (Date) out.get('nextDeliveryDate'));
+        Assert.areEqual(Date.today().addMonths(1), Date.valueOf((String) out.get('nextDeliveryDate')));
     }
 
     @IsTest
     static void post_missingBody_returns400() {
         newRequest('POST', '/subscriptions', null);
-        Map<String, Object> out = BrewSubscriptionApi.activate();
+        BrewSubscriptionApi.activate();
+        Map<String, Object> out = readResponse();
         Assert.areEqual(400, RestContext.response.statusCode);
         Assert.areEqual('Request body is required', (String) out.get('message'));
     }
@@ -56,7 +64,8 @@ private class BrewSubscriptionApiTest {
         };
         newRequest('POST', '/subscriptions', body);
 
-        Map<String, Object> out = BrewSubscriptionApi.activate();
+        BrewSubscriptionApi.activate();
+        Map<String, Object> out = readResponse();
         Assert.areEqual(400, RestContext.response.statusCode);
         Assert.isTrue(((String) out.get('message')).contains('credit hold'));
     }
@@ -68,7 +77,8 @@ private class BrewSubscriptionApiTest {
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Weekly');
         newRequest('GET', '/subscriptions/' + s.Id, null);
 
-        Map<String, Object> out = BrewSubscriptionApi.fetch();
+        BrewSubscriptionApi.fetch();
+        Map<String, Object> out = readResponse();
 
         Assert.areEqual(s.Id, (Id) out.get('id'));
         Assert.areEqual('Weekly', (String) out.get('cadence'));
@@ -77,7 +87,8 @@ private class BrewSubscriptionApiTest {
     @IsTest
     static void get_missingId_returns400() {
         newRequest('GET', '/subscriptions/', null);
-        Map<String, Object> out = BrewSubscriptionApi.fetch();
+        BrewSubscriptionApi.fetch();
+        Map<String, Object> out = readResponse();
         Assert.areEqual(400, RestContext.response.statusCode);
         Assert.areEqual('Subscription Id is required', (String) out.get('message'));
     }
@@ -86,7 +97,8 @@ private class BrewSubscriptionApiTest {
     static void get_unknownId_returns404() {
         Id fake = '0010000000000000AAA';
         newRequest('GET', '/subscriptions/' + fake, null);
-        Map<String, Object> out = BrewSubscriptionApi.fetch();
+        BrewSubscriptionApi.fetch();
+        Map<String, Object> out = readResponse();
         Assert.areEqual(404, RestContext.response.statusCode);
         Assert.areEqual('Not found', (String) out.get('message'));
     }
@@ -98,7 +110,8 @@ private class BrewSubscriptionApiTest {
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
 
         newRequest('PATCH', '/subscriptions/' + s.Id, new Map<String, Object>{ 'action' => 'pause' });
-        Map<String, Object> out = BrewSubscriptionApi.transition();
+        BrewSubscriptionApi.transition();
+        Map<String, Object> out = readResponse();
         Assert.areEqual('Paused', (String) out.get('status'));
     }
 
@@ -113,9 +126,10 @@ private class BrewSubscriptionApiTest {
             'action'     => 'resume',
             'resumeDate' => String.valueOf(Date.newInstance(2026, 7, 1))
         });
-        Map<String, Object> out = BrewSubscriptionApi.transition();
+        BrewSubscriptionApi.transition();
+        Map<String, Object> out = readResponse();
         Assert.areEqual('Active', (String) out.get('status'));
-        Assert.areEqual(Date.newInstance(2026, 7, 8), (Date) out.get('nextDeliveryDate'));
+        Assert.areEqual(Date.newInstance(2026, 7, 8), Date.valueOf((String) out.get('nextDeliveryDate')));
     }
 
     @IsTest
@@ -128,7 +142,8 @@ private class BrewSubscriptionApiTest {
             'action' => 'cancel',
             'reason' => 'user request'
         });
-        Map<String, Object> out = BrewSubscriptionApi.transition();
+        BrewSubscriptionApi.transition();
+        Map<String, Object> out = readResponse();
         Assert.areEqual('Cancelled', (String) out.get('status'));
         Assert.areEqual(null, (Date) out.get('nextDeliveryDate'));
     }
@@ -140,7 +155,8 @@ private class BrewSubscriptionApiTest {
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
 
         newRequest('PATCH', '/subscriptions/' + s.Id, new Map<String, Object>{ 'action' => 'explode' });
-        Map<String, Object> out = BrewSubscriptionApi.transition();
+        BrewSubscriptionApi.transition();
+        Map<String, Object> out = readResponse();
         Assert.areEqual(400, RestContext.response.statusCode);
         Assert.isTrue(((String) out.get('message')).contains('Unknown action'));
     }
@@ -152,7 +168,8 @@ private class BrewSubscriptionApiTest {
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
 
         newRequest('PATCH', '/subscriptions/' + s.Id, new Map<String, Object>{});
-        Map<String, Object> out = BrewSubscriptionApi.transition();
+        BrewSubscriptionApi.transition();
+        Map<String, Object> out = readResponse();
         Assert.areEqual(400, RestContext.response.statusCode);
     }
 
@@ -163,7 +180,8 @@ private class BrewSubscriptionApiTest {
         Subscription__c s = BrewTestFactory.subscription(a.Id, p.Id, 'Monthly');
 
         newRequest('PATCH', '/subscriptions/' + s.Id, new Map<String, Object>{ 'action' => 'resume' });
-        Map<String, Object> out = BrewSubscriptionApi.transition();
+        BrewSubscriptionApi.transition();
+        Map<String, Object> out = readResponse();
         Assert.areEqual(400, RestContext.response.statusCode);
         Assert.isTrue(((String) out.get('message')).contains('Only paused'));
     }

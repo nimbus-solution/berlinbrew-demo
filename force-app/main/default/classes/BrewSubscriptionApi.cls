@@ -11,9 +11,9 @@
 global with sharing class BrewSubscriptionApi {
 
     @HttpPost
-    global static Map<String, Object> activate() {
+    global static void activate() {
         Map<String, Object> body = readBody();
-        if (body == null) return badRequest('Request body is required');
+        if (body == null) { badRequest('Request body is required'); return; }
         try {
             Id accountId    = toId(body.get('accountId'));
             Id productId    = toId(body.get('productId'));
@@ -22,37 +22,36 @@ global with sharing class BrewSubscriptionApi {
             if (startDate == null) startDate = Date.today();
 
             Subscription__c s = BrewSubscriptionService.activate(accountId, productId, cadence, startDate);
-            RestContext.response.statusCode = 201;
-            return toMap(load(s.Id));
+            writeJson(201, toMap(load(s.Id)));
         } catch (BrewSubscriptionService.SubscriptionException e) {
-            return badRequest(e.getMessage());
+            badRequest(e.getMessage());
         }
     }
 
     @HttpGet
-    global static Map<String, Object> fetch() {
+    global static void fetch() {
         Id subId = parseIdFromUri();
-        if (subId == null) return badRequest('Subscription Id is required');
+        if (subId == null) { badRequest('Subscription Id is required'); return; }
         List<Subscription__c> rows = [
             SELECT Id, Account__c, Product__c, Cadence__c, Status__c,
                    StartDate__c, NextDeliveryDate__c, MonthlyPrice__c
             FROM Subscription__c WHERE Id = :subId
         ];
         if (rows.isEmpty()) {
-            RestContext.response.statusCode = 404;
-            return new Map<String, Object>{ 'message' => 'Not found' };
+            writeJson(404, new Map<String, Object>{ 'message' => 'Not found' });
+            return;
         }
-        return toMap(rows[0]);
+        writeJson(200, toMap(rows[0]));
     }
 
     @HttpPatch
-    global static Map<String, Object> transition() {
+    global static void transition() {
         Id subId = parseIdFromUri();
-        if (subId == null) return badRequest('Subscription Id is required');
+        if (subId == null) { badRequest('Subscription Id is required'); return; }
         Map<String, Object> body = readBody();
-        if (body == null) return badRequest('action is required (pause | resume | cancel)');
+        if (body == null) { badRequest('action is required (pause | resume | cancel)'); return; }
         String action = (String) body.get('action');
-        if (String.isBlank(action)) return badRequest('action is required (pause | resume | cancel)');
+        if (String.isBlank(action)) { badRequest('action is required (pause | resume | cancel)'); return; }
         try {
             switch on action.toLowerCase() {
                 when 'pause' {
@@ -67,12 +66,13 @@ global with sharing class BrewSubscriptionApi {
                     BrewSubscriptionService.cancel(subId, (String) body.get('reason'));
                 }
                 when else {
-                    return badRequest('Unknown action: ' + action);
+                    badRequest('Unknown action: ' + action);
+                    return;
                 }
             }
-            return toMap(load(subId));
+            writeJson(200, toMap(load(subId)));
         } catch (BrewSubscriptionService.SubscriptionException e) {
-            return badRequest(e.getMessage());
+            badRequest(e.getMessage());
         }
     }
 
@@ -131,8 +131,13 @@ global with sharing class BrewSubscriptionApi {
         try { return Date.valueOf(String.valueOf(v)); } catch (Exception e) { return null; }
     }
 
-    private static Map<String, Object> badRequest(String msg) {
-        RestContext.response.statusCode = 400;
-        return new Map<String, Object>{ 'message' => msg };
+    private static void badRequest(String msg) {
+        writeJson(400, new Map<String, Object>{ 'message' => msg });
+    }
+
+    private static void writeJson(Integer statusCode, Map<String, Object> body) {
+        RestContext.response.statusCode = statusCode;
+        RestContext.response.addHeader('Content-Type', 'application/json');
+        RestContext.response.responseBody = Blob.valueOf(JSON.serialize(body));
     }
 }

@@ -35,11 +35,6 @@
         <editable>false</editable>
     </fieldPermissions>
     <fieldPermissions>
-        <field>CoffeeProduct__c.RetailPrice__c</field>
-        <readable>true</readable>
-        <editable>false</editable>
-    </fieldPermissions>
-    <fieldPermissions>
         <field>CoffeeProduct__c.Origin__c</field>
         <readable>true</readable>
         <editable>false</editable>
