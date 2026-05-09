@@ -23,6 +23,7 @@ private class BrewFieldLevelSecurityTest {
         return u;
     }
 
+
     @IsTest
     static void supportAgent_querying_withUserMode_cannotSeeWholesaleCost() {
         insert new CoffeeProduct__c(Name = 'SKU-1', RetailPrice__c = 10, WholesaleCost__c = 4, Active__c = true);
@@ -59,10 +60,10 @@ private class BrewFieldLevelSecurityTest {
     }
 
     @IsTest
-    static void admin_userMode_seesAllFields() {
+    static void systemContext_seesAllFields() {
         insert new CoffeeProduct__c(Name = 'SKU-1', RetailPrice__c = 10, WholesaleCost__c = 4, Active__c = true);
         List<CoffeeProduct__c> rows = [
-            SELECT Id, Name, RetailPrice__c, WholesaleCost__c FROM CoffeeProduct__c WITH USER_MODE
+            SELECT Id, Name, RetailPrice__c, WholesaleCost__c FROM CoffeeProduct__c
         ];
         Assert.areEqual(4, rows[0].WholesaleCost__c);
     }

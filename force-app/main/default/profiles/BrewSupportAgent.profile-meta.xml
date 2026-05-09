@@ -40,6 +40,16 @@
         <editable>false</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>CoffeeProduct__c.RoastLevel__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>CoffeeProduct__c.Active__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>Account.CreditHoldReason__c</field>
         <readable>true</readable>
         <editable>false</editable>

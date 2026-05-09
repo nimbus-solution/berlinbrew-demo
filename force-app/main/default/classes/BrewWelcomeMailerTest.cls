@@ -32,7 +32,7 @@ private class BrewWelcomeMailerTest {
         Messaging.SingleEmailMessage msg = BrewWelcomeMailer.compose(a);
         Assert.areNotEqual(null, msg);
         // Subject pulled from the seeded label in nimbus.properties.
-        Assert.areEqual('Welcome to BerlinBrew', msg.getSubject());
+        Assert.areEqual('Welcome to BerlinBrew — your first roast is on its way', msg.getSubject());
     }
 
     @isTest

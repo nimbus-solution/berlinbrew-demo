@@ -95,7 +95,7 @@ private class BrewSubscriptionApiTest {
 
     @IsTest
     static void get_unknownId_returns404() {
-        Id fake = '0010000000000000AAA';
+        Id fake = Subscription__c.SObjectType.getDescribe().getKeyPrefix() + '000000000001';
         newRequest('GET', '/subscriptions/' + fake, null);
         BrewSubscriptionApi.fetch();
         Map<String, Object> out = readResponse();

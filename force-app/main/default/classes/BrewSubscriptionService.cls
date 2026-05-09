@@ -77,7 +77,8 @@ public with sharing class BrewSubscriptionService {
 
     public static List<Subscription__c> dueForDelivery(Date asOf) {
         return [
-            SELECT Id, Account__c, Account__r.Name, Product__c, Cadence__c, MonthlyPrice__c
+            SELECT Id, Account__c, Account__r.Name, Product__c, Cadence__c,
+                   MonthlyPrice__c, Status__c, NextDeliveryDate__c
             FROM Subscription__c
             WHERE Status__c = 'Active' AND NextDeliveryDate__c <= :asOf
             ORDER BY NextDeliveryDate__c
