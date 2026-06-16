@@ -29,7 +29,7 @@ permissions:
 env:
   NIMBUS_VERSION: "0.3.7"  # pinned for reproducible CI — bump deliberately
   NIMBUS_PROFILE: ci       # activates the %ci profile in nimbus.properties
-  COVERAGE_THRESHOLD: "75" # Salesforce production minimum
+  COVERAGE_THRESHOLD: "95" # raise the quality bar above the platform minimum
 
 jobs:
   apex-tests:
