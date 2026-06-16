@@ -21,7 +21,7 @@ public with sharing class BrewPricingService {
         }
         Decimal base = product.RetailPrice__c;
         switch on cadence {
-            when 'Weekly'    { return (base * 4).setScale(2); }
+            when 'Weekly'    { return (base * 5).setScale(2); }
             when 'Biweekly'  { return (base * 2).setScale(2); }
             when 'Monthly'   { return base.setScale(2); }
             when 'Quarterly' { return (base * 3 * 0.90).setScale(2); }
