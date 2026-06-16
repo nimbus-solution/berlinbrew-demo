@@ -84,4 +84,20 @@ public with sharing class BrewLoyaltyEngine {
         if (!txns.isEmpty())     insert txns;
         if (!events.isEmpty())   EventBus.publish(events);
     }
+
+    public static final Integer BIRTHDAY_BONUS = 250;
+
+    /**
+     * One-time birthday gift, scaled by tier: higher tiers receive a
+     * richer multiple of the base birthday bonus. Pure function — the
+     * caller decides when to award it via awardPoints().
+     */
+    public static Integer birthdayBonus(String tier) {
+        switch on tier {
+            when 'Roaster' { return BIRTHDAY_BONUS * 4; }
+            when 'Gold'    { return BIRTHDAY_BONUS * 3; }
+            when 'Silver'  { return BIRTHDAY_BONUS * 2; }
+            when else      { return BIRTHDAY_BONUS; }
+        }
+    }
 }
