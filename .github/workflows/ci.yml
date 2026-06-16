@@ -1,0 +1,116 @@
+name: CI
+
+# Trunk-based development: every change reaches `main` through a short-lived
+# branch and a pull request. This pipeline validates PRs before they merge,
+# re-verifies the trunk after merge, and supports a merge queue. It runs the
+# Apex test suite locally with Nimbus — no Salesforce org, no deployment.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  merge_group: # merge queue: validate the combined result before it lands
+  workflow_dispatch:
+
+# Supersede in-flight PR runs when a branch is pushed again; never cancel a
+# run on the trunk or in the merge queue (those must complete to be trusted).
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Least privilege. checks/pull-requests:write are only needed to publish the
+# test-results check and annotate the PR.
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+env:
+  NIMBUS_VERSION: "0.3.7"  # pinned for reproducible CI — bump deliberately
+  NIMBUS_PROFILE: ci       # activates the %ci profile in nimbus.properties
+  COVERAGE_THRESHOLD: "75" # Salesforce production minimum
+
+jobs:
+  apex-tests:
+    name: Apex tests (Nimbus)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Nimbus runtime
+        # Embedded PostgreSQL binaries are downloaded on first run. Cache them
+        # so subsequent runs start cold-fast. Keyed on the Nimbus version, so a
+        # version bump busts the cache automatically.
+        uses: actions/cache@v4
+        with:
+          path: ~/.nimbus/pg
+          key: nimbus-pg-${{ runner.os }}-${{ env.NIMBUS_VERSION }}
+
+      - name: Install Nimbus
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # avoids API rate limits
+        run: |
+          curl -fsSL https://install.testnimbus.dev | sh
+          nimbus --version
+
+      - name: Check license secret
+        # GitHub withholds repository secrets from pull_request runs originating
+        # in a fork. Turn the resulting empty key into a clear message instead
+        # of a confusing "Set NIMBUS_LICENSE_KEY" deeper in the run.
+        env:
+          NIMBUS_LICENSE_KEY: ${{ secrets.NIMBUS_LICENSE_KEY }}
+        run: |
+          if [ -z "$NIMBUS_LICENSE_KEY" ]; then
+            echo "::error::NIMBUS_LICENSE_KEY is empty — secret not set, misnamed, or withheld (fork PR)."
+            exit 1
+          fi
+
+      - name: Run Apex tests
+        env:
+          NIMBUS_LICENSE_KEY: ${{ secrets.NIMBUS_LICENSE_KEY }}
+        run: |
+          nimbus test "*" \
+            --coverage --coverage-report coverage.xml \
+            --results-xml results.xml
+
+      - name: Enforce coverage threshold
+        if: always()
+        run: |
+          if [ ! -f coverage.xml ]; then
+            echo "::error::coverage.xml was not produced — the test run failed before coverage was collected."
+            exit 1
+          fi
+          covered=$(grep -m1 -oE 'lines-covered="[0-9]+"' coverage.xml | grep -oE '[0-9]+')
+          valid=$(grep -m1 -oE 'lines-valid="[0-9]+"' coverage.xml | grep -oE '[0-9]+')
+          pct=$(awk -v c="${covered:-0}" -v v="${valid:-0}" 'BEGIN{ if (v==0) print "0.00"; else printf "%.2f", (c/v)*100 }')
+          echo "Line coverage: ${pct}% (${covered:-0}/${valid:-0} lines) — threshold ${COVERAGE_THRESHOLD}%"
+          {
+            echo "### Apex coverage"
+            echo ""
+            echo "**${pct}%** of lines covered (${covered:-0}/${valid:-0}) — threshold **${COVERAGE_THRESHOLD}%**"
+          } >> "$GITHUB_STEP_SUMMARY"
+          awk -v p="$pct" -v t="$COVERAGE_THRESHOLD" 'BEGIN{ exit !(p+0 >= t+0) }' || {
+            echo "::error::Line coverage ${pct}% is below the ${COVERAGE_THRESHOLD}% threshold."
+            exit 1
+          }
+
+      - name: Publish test results
+        # Skip on fork PRs — they have no checks:write token, which would 403.
+        if: ${{ always() && github.event.pull_request.head.repo.fork != true }}
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          check_name: Apex test results
+          files: results.xml
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: apex-test-reports
+          path: |
+            coverage.xml
+            results.xml
+          if-no-files-found: warn
