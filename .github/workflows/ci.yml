@@ -50,11 +50,9 @@ jobs:
           key: nimbus-pg-${{ runner.os }}-${{ env.NIMBUS_VERSION }}
 
       - name: Install Nimbus
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # avoids API rate limits
-        run: |
-          curl -fsSL https://install.testnimbus.dev | sh
-          nimbus --version
+        uses: nimbus-solution/setup-nimbus@v1
+        with:
+          version: ${{ env.NIMBUS_VERSION }}
 
       - name: Check license secret
         # GitHub withholds repository secrets from pull_request runs originating
