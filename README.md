@@ -29,6 +29,8 @@ nimbus test
 Expected: **all green in under a second on a warm daemon.** No org
 connection, no credentials, no scratch org pool.
 
+![nimbus test running this repo's 153 Apex tests locally — all green in 945ms](docs/nimbus-test.gif)
+
 ## What you get
 
 A real-shape Salesforce project that exercises every facet of Nimbus you'd hit
