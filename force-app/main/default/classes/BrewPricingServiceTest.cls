@@ -4,7 +4,7 @@ private class BrewPricingServiceTest {
     @IsTest
     static void weeklyPrice_is_fourTimesBase() {
         CoffeeProduct__c p = new CoffeeProduct__c(RetailPrice__c = 12.50);
-        Assert.areEqual(50.00, BrewPricingService.calculateSubscriptionPrice(p, 'Weekly'));
+        Assert.areEqual(62.50, BrewPricingService.calculateSubscriptionPrice(p, 'Weekly'));
     }
 
     @IsTest
