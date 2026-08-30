@@ -75,4 +75,20 @@ public with sharing class BrewPricingService {
         }
         return (price * multiplier).setScale(2);
     }
+
+    public static final Decimal BUNDLE_DISCOUNT = 0.10;
+
+    /**
+     * Price for buying multiple products as a single bundle: the sum of
+     * retail prices with a flat 10% bundle discount. Empty/null bundles
+     * cost 0; products missing a RetailPrice__c are treated as 0.
+     */
+    public static Decimal bundlePrice(List<CoffeeProduct__c> products) {
+        if (products == null || products.isEmpty()) return 0;
+        Decimal sum = 0;
+        for (CoffeeProduct__c p : products) {
+            if (p.RetailPrice__c != null) sum += p.RetailPrice__c;
+        }
+        return (sum * (1 - BUNDLE_DISCOUNT)).setScale(2);
+    }
 }
