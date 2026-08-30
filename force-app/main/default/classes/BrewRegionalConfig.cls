@@ -105,4 +105,18 @@ public with sharing class BrewRegionalConfig {
         }
         return out;
     }
+
+    /**
+     * How much more a customer must spend to reach free shipping in a
+     * region. Returns 0 when they already qualify, or null when the
+     * region has no configured threshold. Mirrors qualifiesForFreeShipping
+     * but gives the UI a number to show ("spend EUR 5 more for free shipping").
+     */
+    public static Decimal freeShippingShortfall(String region, Decimal orderTotal) {
+        BrewConfig__mdt cfg = forRegion(region);
+        if (cfg == null || cfg.FreeShippingThreshold__c == null) return null;
+        Decimal total = orderTotal == null ? 0 : orderTotal;
+        Decimal shortfall = cfg.FreeShippingThreshold__c - total;
+        return shortfall > 0 ? shortfall : 0;
+    }
 }
