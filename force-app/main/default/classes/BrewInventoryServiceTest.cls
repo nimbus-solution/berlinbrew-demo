@@ -12,8 +12,18 @@ private class BrewInventoryServiceTest {
     @IsTest
     static void reserve_spans_multipleBatches_fifo() {
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
-        RoastBatch__c older = new RoastBatch__c(Product__c = p.Id, RoastDate__c = Date.today().addDays(-10), QuantityKg__c = 2, ReservedKg__c = 0);
-        RoastBatch__c newer = new RoastBatch__c(Product__c = p.Id, RoastDate__c = Date.today(),              QuantityKg__c = 5, ReservedKg__c = 0);
+        RoastBatch__c older = new RoastBatch__c(
+            Product__c = p.Id,
+            RoastDate__c = Date.today().addDays(-10),
+            QuantityKg__c = 2,
+            ReservedKg__c = 0
+        );
+        RoastBatch__c newer = new RoastBatch__c(
+            Product__c = p.Id,
+            RoastDate__c = Date.today(),
+            QuantityKg__c = 5,
+            ReservedKg__c = 0
+        );
         insert new List<RoastBatch__c>{ older, newer };
 
         List<RoastBatch__c> reserved = BrewInventoryService.reserve(p.Id, 3.0);
@@ -54,8 +64,18 @@ private class BrewInventoryServiceTest {
     static void availableStock_aggregate_sumsAllBatches() {
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 10, 4);
         insert new List<RoastBatch__c>{
-            new RoastBatch__c(Product__c = p.Id, RoastDate__c = Date.today(), QuantityKg__c = 3.5, ReservedKg__c = 0.5),
-            new RoastBatch__c(Product__c = p.Id, RoastDate__c = Date.today(), QuantityKg__c = 2.0, ReservedKg__c = 1.0)
+            new RoastBatch__c(
+                Product__c = p.Id,
+                RoastDate__c = Date.today(),
+                QuantityKg__c = 3.5,
+                ReservedKg__c = 0.5
+            ),
+            new RoastBatch__c(
+                Product__c = p.Id,
+                RoastDate__c = Date.today(),
+                QuantityKg__c = 2.0,
+                ReservedKg__c = 1.0
+            )
         };
         Assert.areEqual(4.0, BrewInventoryService.availableStock(p.Id));
     }

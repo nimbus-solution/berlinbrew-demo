@@ -50,7 +50,12 @@ public with sharing class BrewSubscriptionService {
     }
 
     public static void pause(Id subscriptionId) {
-        Subscription__c s = [SELECT Id, Status__c FROM Subscription__c WHERE Id = :subscriptionId FOR UPDATE];
+        Subscription__c s = [
+            SELECT Id, Status__c
+            FROM Subscription__c
+            WHERE Id = :subscriptionId
+            FOR UPDATE
+        ];
         if (s.Status__c == 'Cancelled' || s.Status__c == 'Churned') {
             throw new SubscriptionException('Cannot pause a terminated subscription');
         }
@@ -59,7 +64,12 @@ public with sharing class BrewSubscriptionService {
     }
 
     public static void resume(Id subscriptionId, Date resumeDate) {
-        Subscription__c s = [SELECT Id, Status__c, Cadence__c FROM Subscription__c WHERE Id = :subscriptionId FOR UPDATE];
+        Subscription__c s = [
+            SELECT Id, Status__c, Cadence__c
+            FROM Subscription__c
+            WHERE Id = :subscriptionId
+            FOR UPDATE
+        ];
         if (s.Status__c != 'Paused') {
             throw new SubscriptionException('Only paused subscriptions can be resumed');
         }
@@ -69,7 +79,12 @@ public with sharing class BrewSubscriptionService {
     }
 
     public static void cancel(Id subscriptionId, String reason) {
-        Subscription__c s = [SELECT Id, Status__c FROM Subscription__c WHERE Id = :subscriptionId FOR UPDATE];
+        Subscription__c s = [
+            SELECT Id, Status__c
+            FROM Subscription__c
+            WHERE Id = :subscriptionId
+            FOR UPDATE
+        ];
         s.Status__c           = 'Cancelled';
         s.NextDeliveryDate__c = null;
         update s;

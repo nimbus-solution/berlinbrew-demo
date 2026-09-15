@@ -78,7 +78,11 @@ private class BrewBulkScenarioTest {
 
         for (Integer i = 0; i < 10; i++) {
             BrewSubscriptionService.advanceDeliveries(new List<Subscription__c>{ s });
-            s = [SELECT Id, Status__c, Account__c, Cadence__c, MonthlyPrice__c, NextDeliveryDate__c FROM Subscription__c WHERE Id = :s.Id];
+            s = [
+                SELECT Id, Status__c, Account__c, Cadence__c, MonthlyPrice__c, NextDeliveryDate__c
+                FROM Subscription__c
+                WHERE Id = :s.Id
+            ];
         }
         Account out = [SELECT LoyaltyPoints__c, LoyaltyTier__c FROM Account WHERE Id = :a.Id];
         Assert.areEqual(600, out.LoyaltyPoints__c);

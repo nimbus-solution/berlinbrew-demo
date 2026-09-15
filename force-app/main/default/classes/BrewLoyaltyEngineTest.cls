@@ -2,23 +2,49 @@
 private class BrewLoyaltyEngineTest {
 
     @IsTest
-    static void tierFor_zero_isBronze()     { Assert.areEqual('Bronze',  BrewLoyaltyEngine.tierFor(0));     }
+    static void tierFor_zero_isBronze() {
+        Assert.areEqual('Bronze', BrewLoyaltyEngine.tierFor(0));
+    }
+
     @IsTest
-    static void tierFor_499_isBronze()      { Assert.areEqual('Bronze',  BrewLoyaltyEngine.tierFor(499));   }
+    static void tierFor_499_isBronze() {
+        Assert.areEqual('Bronze', BrewLoyaltyEngine.tierFor(499));
+    }
+
     @IsTest
-    static void tierFor_500_isSilver()      { Assert.areEqual('Silver',  BrewLoyaltyEngine.tierFor(500));   }
+    static void tierFor_500_isSilver() {
+        Assert.areEqual('Silver', BrewLoyaltyEngine.tierFor(500));
+    }
+
     @IsTest
-    static void tierFor_1999_isSilver()     { Assert.areEqual('Silver',  BrewLoyaltyEngine.tierFor(1999));  }
+    static void tierFor_1999_isSilver() {
+        Assert.areEqual('Silver', BrewLoyaltyEngine.tierFor(1999));
+    }
+
     @IsTest
-    static void tierFor_2000_isGold()       { Assert.areEqual('Gold',    BrewLoyaltyEngine.tierFor(2000));  }
+    static void tierFor_2000_isGold() {
+        Assert.areEqual('Gold', BrewLoyaltyEngine.tierFor(2000));
+    }
+
     @IsTest
-    static void tierFor_9999_isGold()       { Assert.areEqual('Gold',    BrewLoyaltyEngine.tierFor(9999));  }
+    static void tierFor_9999_isGold() {
+        Assert.areEqual('Gold', BrewLoyaltyEngine.tierFor(9999));
+    }
+
     @IsTest
-    static void tierFor_10000_isRoaster()   { Assert.areEqual('Roaster', BrewLoyaltyEngine.tierFor(10000)); }
+    static void tierFor_10000_isRoaster() {
+        Assert.areEqual('Roaster', BrewLoyaltyEngine.tierFor(10000));
+    }
+
     @IsTest
-    static void tierFor_negative_isBronze() { Assert.areEqual('Bronze',  BrewLoyaltyEngine.tierFor(-50));   }
+    static void tierFor_negative_isBronze() {
+        Assert.areEqual('Bronze', BrewLoyaltyEngine.tierFor(-50));
+    }
+
     @IsTest
-    static void tierFor_null_isBronze()     { Assert.areEqual('Bronze',  BrewLoyaltyEngine.tierFor(null));  }
+    static void tierFor_null_isBronze() {
+        Assert.areEqual('Bronze', BrewLoyaltyEngine.tierFor(null));
+    }
 
     @IsTest
     static void pointsForPurchase_floors() {
@@ -46,7 +72,11 @@ private class BrewLoyaltyEngineTest {
     static void awardPoints_writesTransactionRow() {
         Account a = BrewTestFactory.account('A');
         BrewLoyaltyEngine.awardPoints(a.Id, 42, 'Referral');
-        List<LoyaltyTransaction__c> txns = [SELECT Points__c, Reason__c FROM LoyaltyTransaction__c WHERE Account__c = :a.Id];
+        List<LoyaltyTransaction__c> txns = [
+            SELECT Points__c, Reason__c
+            FROM LoyaltyTransaction__c
+            WHERE Account__c = :a.Id
+        ];
         Assert.areEqual(1, txns.size());
         Assert.areEqual(42, txns[0].Points__c);
         Assert.areEqual('Referral', txns[0].Reason__c);
@@ -80,7 +110,9 @@ private class BrewLoyaltyEngineTest {
     static void awardPointsBulk_updatesAllAccounts() {
         List<Account> accts = BrewTestFactory.accounts(5);
         Map<Id, Integer> pts = new Map<Id, Integer>();
-        for (Account a : accts) pts.put(a.Id, 300);
+        for (Account a : accts) {
+            pts.put(a.Id, 300);
+        }
         Test.startTest();
         BrewLoyaltyEngine.awardPointsBulk(pts);
         Test.stopTest();
