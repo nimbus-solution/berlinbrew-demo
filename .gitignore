@@ -11,3 +11,8 @@ node_modules/
 
 # IDE state
 .idea/
+
+# Build output of the React ui bundle (its own .gitignore only exists on the branch that carries it)
+force-app/main/default/uiBundles/*/dist/
+force-app/main/default/uiBundles/*/build/
+*.tsbuildinfo
