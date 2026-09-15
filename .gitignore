@@ -6,5 +6,8 @@ node_modules/
 *.log
 .DS_Store
 
-# Internal-only material kept in a sibling directory
-demo/
+# Internal-only material kept in a sibling directory (root only; scripts/demo/ is public)
+/demo/
+
+# IDE state
+.idea/
