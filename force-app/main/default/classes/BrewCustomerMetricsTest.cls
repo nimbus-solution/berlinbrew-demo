@@ -21,15 +21,29 @@ private class BrewCustomerMetricsTest {
         insert subs;
     }
 
+    // The two Account-level metrics roll up EVERY Account in the database, and a
+    // test cannot assume it is the only thing that put Accounts there: an org run
+    // under seeAllData, or a local run whose nimbus.properties seeds demo rows,
+    // both start with data. So these two tests assert on the change they make,
+    // not on absolute totals -- the same pattern that keeps a test green under
+    // seeAllData=true.
     @IsTest
     static void byTier_rollsUpCorrectly() {
-        List<BrewCustomerMetrics.TierRollup> rows = BrewCustomerMetrics.byTier();
-        Map<String, BrewCustomerMetrics.TierRollup> byTier = new Map<String, BrewCustomerMetrics.TierRollup>();
-        for (BrewCustomerMetrics.TierRollup r : rows) byTier.put(r.tier, r);
-        Assert.areEqual(2, byTier.get('Bronze').customerCount);
-        Assert.areEqual(1, byTier.get('Silver').customerCount);
-        Assert.areEqual(2, byTier.get('Gold').customerCount);
-        Assert.areEqual(5000, byTier.get('Gold').totalLifetimeValue);
+        Map<String, BrewCustomerMetrics.TierRollup> before = rollupByTier();
+
+        insert new List<Account>{
+            new Account(Name = 'B1', LoyaltyTier__c = 'Bronze', LifetimeValue__c = 100),
+            new Account(Name = 'B2', LoyaltyTier__c = 'Bronze', LifetimeValue__c = 50),
+            new Account(Name = 'B3', LoyaltyTier__c = 'Silver', LifetimeValue__c = 500),
+            new Account(Name = 'B4', LoyaltyTier__c = 'Gold',   LifetimeValue__c = 2000),
+            new Account(Name = 'B5', LoyaltyTier__c = 'Gold',   LifetimeValue__c = 3000)
+        };
+
+        Map<String, BrewCustomerMetrics.TierRollup> after = rollupByTier();
+        Assert.areEqual(customerCount(before, 'Bronze') + 2, after.get('Bronze').customerCount);
+        Assert.areEqual(customerCount(before, 'Silver') + 1, after.get('Silver').customerCount);
+        Assert.areEqual(customerCount(before, 'Gold') + 2,   after.get('Gold').customerCount);
+        Assert.areEqual(lifetimeValue(before, 'Gold') + 5000, after.get('Gold').totalLifetimeValue);
     }
 
     @IsTest
@@ -51,6 +65,27 @@ private class BrewCustomerMetricsTest {
 
     @IsTest
     static void totalLifetimeRevenue_sumsAll() {
-        Assert.areEqual(5650, BrewCustomerMetrics.totalLifetimeRevenue());
+        Decimal before = BrewCustomerMetrics.totalLifetimeRevenue();
+
+        insert new List<Account>{
+            new Account(Name = 'R1', LifetimeValue__c = 4000),
+            new Account(Name = 'R2', LifetimeValue__c = 1650)
+        };
+
+        Assert.areEqual(before + 5650, BrewCustomerMetrics.totalLifetimeRevenue());
+    }
+
+    private static Map<String, BrewCustomerMetrics.TierRollup> rollupByTier() {
+        Map<String, BrewCustomerMetrics.TierRollup> byTier = new Map<String, BrewCustomerMetrics.TierRollup>();
+        for (BrewCustomerMetrics.TierRollup r : BrewCustomerMetrics.byTier()) byTier.put(r.tier, r);
+        return byTier;
+    }
+
+    private static Integer customerCount(Map<String, BrewCustomerMetrics.TierRollup> rollup, String tier) {
+        return rollup.containsKey(tier) ? rollup.get(tier).customerCount : 0;
+    }
+
+    private static Decimal lifetimeValue(Map<String, BrewCustomerMetrics.TierRollup> rollup, String tier) {
+        return rollup.containsKey(tier) ? rollup.get(tier).totalLifetimeValue : 0;
     }
 }
