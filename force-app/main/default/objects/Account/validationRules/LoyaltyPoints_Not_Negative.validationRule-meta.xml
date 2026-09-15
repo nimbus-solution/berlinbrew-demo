@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LoyaltyPoints_Not_Negative</fullName>
+    <active>true</active>
+    <description>Loyalty points are earned, never owed. A negative balance is always a data error, so it is rejected at the door — in the org, and in the local runtime.</description>
+    <errorConditionFormula>LoyaltyPoints__c &lt; 0</errorConditionFormula>
+    <errorDisplayField>LoyaltyPoints__c</errorDisplayField>
+    <errorMessage>Loyalty points cannot be negative.</errorMessage>
+</ValidationRule>

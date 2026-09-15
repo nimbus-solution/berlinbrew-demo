@@ -191,23 +191,27 @@ Auto-fires on first `nimbus test` run via the doctor preamble. Closes the
 ```
 berlinbrew-demo/
 ├── README.md                  # this file
-├── nimbus.properties          # Nimbus config (managed packages, governor, label seeds)
+├── nimbus.properties          # Nimbus config: managed packages, governor, label seeds, six seeded demo accounts
 ├── sfdx-project.json          # standard SFDX project file
 ├── .forceignore               # excludes the HopLog showcase + API-version mismatch demo from sf deploys
+├── data/                      # sample Account/Contact/Opportunity tree for `sf data import tree`
+├── scripts/demo/              # the Data Loader demo: the spreadsheet, how it is built, the recording runbook
 ├── stubs/
 │   ├── README.md              # how to add managed-package stubs
 │   └── Hoplog/                # one folder per package: classes + namespaced objects
 │       ├── Hoplog.cls
 │       └── objects/Hoplog__LogEntry__c/
 └── force-app/main/default/
+    ├── aura/                  # brewBanner
     ├── classes/               # services + test classes
     ├── customMetadata/        # 3 BrewConfig records (EU, US, UK)
+    ├── flexipages/            # Account_Record_Page
     ├── flows/                 # Account_WelcomeEnrichment
-    ├── labels/                # 3 custom labels
-    ├── objects/               # 7 custom objects + Account/Contact extensions
-    ├── permissionsets/        # BrewLoyaltyManager
+    ├── labels/                # custom labels
+    ├── layouts/               # Account-BerlinBrew Layout
+    ├── objects/               # 6 custom objects + Account extensions, a validation rule, a list view
+    ├── permissionsets/        # BrewFlsAdmin, BrewSupport
     ├── profiles/              # BrewSupportAgent, BrewFulfillment
-    ├── staticresources/       # demo CSV + sample shipping API JSON
     └── triggers/              # AccountTrigger, SubscriptionTrigger
 ```
 

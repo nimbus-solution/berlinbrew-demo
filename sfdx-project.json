@@ -8,5 +8,5 @@
   "name": "berlinbrew",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "60.0"
+  "sourceApiVersion": "67.0"
 }

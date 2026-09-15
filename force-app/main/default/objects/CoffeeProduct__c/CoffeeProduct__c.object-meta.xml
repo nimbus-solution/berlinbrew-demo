@@ -10,5 +10,5 @@
     <sharingModel>ReadWrite</sharingModel>
     <enableActivities>false</enableActivities>
     <enableHistory>true</enableHistory>
-    <enableReports>true</enableReports>
+    <enableReports>false</enableReports>
 </CustomObject>
