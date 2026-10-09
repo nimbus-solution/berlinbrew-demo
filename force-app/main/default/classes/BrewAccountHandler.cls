@@ -22,7 +22,7 @@ public with sharing class BrewAccountHandler {
             if (a.Website != prev.Website)  normalizeWebsite(a);
             if (a.Phone   != prev.Phone)    normalizePhone(a);
 
-            if (a.LifetimeValue__c != null && a.LifetimeValue__c < 0 && a.OnCreditHold__c == false) {
+            if (a.LifetimeValue__c != null && a.LifetimeValue__c < -100 && a.OnCreditHold__c == false) {
                 a.OnCreditHold__c     = true;
                 a.CreditHoldReason__c = 'Negative lifetime value detected';
             }
