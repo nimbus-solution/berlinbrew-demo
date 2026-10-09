@@ -13,7 +13,10 @@ global with sharing class BrewSubscriptionApi {
     @HttpPost
     global static void activate() {
         Map<String, Object> body = readBody();
-        if (body == null) { badRequest('Request body is required'); return; }
+        if (body == null) {
+            badRequest('Request body is required');
+            return;
+        }
         try {
             Id accountId    = toId(body.get('accountId'));
             Id productId    = toId(body.get('productId'));
@@ -31,7 +34,10 @@ global with sharing class BrewSubscriptionApi {
     @HttpGet
     global static void fetch() {
         Id subId = parseIdFromUri();
-        if (subId == null) { badRequest('Subscription Id is required'); return; }
+        if (subId == null) {
+            badRequest('Subscription Id is required');
+            return;
+        }
         List<Subscription__c> rows = [
             SELECT Id, Account__c, Product__c, Cadence__c, Status__c,
                    StartDate__c, NextDeliveryDate__c, MonthlyPrice__c
@@ -47,11 +53,20 @@ global with sharing class BrewSubscriptionApi {
     @HttpPatch
     global static void transition() {
         Id subId = parseIdFromUri();
-        if (subId == null) { badRequest('Subscription Id is required'); return; }
+        if (subId == null) {
+            badRequest('Subscription Id is required');
+            return;
+        }
         Map<String, Object> body = readBody();
-        if (body == null) { badRequest('action is required (pause | resume | cancel)'); return; }
+        if (body == null) {
+            badRequest('action is required (pause | resume | cancel)');
+            return;
+        }
         String action = (String) body.get('action');
-        if (String.isBlank(action)) { badRequest('action is required (pause | resume | cancel)'); return; }
+        if (String.isBlank(action)) {
+            badRequest('action is required (pause | resume | cancel)');
+            return;
+        }
         try {
             switch on action.toLowerCase() {
                 when 'pause' {
@@ -123,12 +138,20 @@ global with sharing class BrewSubscriptionApi {
 
     private static Id toId(Object v) {
         if (v == null) return null;
-        try { return (Id) String.valueOf(v); } catch (Exception e) { return null; }
+        try {
+            return (Id) String.valueOf(v);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static Date toDate(Object v) {
         if (v == null) return null;
-        try { return Date.valueOf(String.valueOf(v)); } catch (Exception e) { return null; }
+        try {
+            return Date.valueOf(String.valueOf(v));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static void badRequest(String msg) {

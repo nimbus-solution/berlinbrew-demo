@@ -7,7 +7,9 @@ private class BrewSubscriptionServiceTest {
         CoffeeProduct__c p = BrewTestFactory.product('SKU-1', 12.00, 5.00);
         Subscription__c s = BrewSubscriptionService.activate(a.Id, p.Id, 'Monthly', Date.today());
         Subscription__c out = [
-            SELECT MonthlyPrice__c, Status__c, NextDeliveryDate__c, Cadence__c FROM Subscription__c WHERE Id = :s.Id
+            SELECT MonthlyPrice__c, Status__c, NextDeliveryDate__c, Cadence__c
+            FROM Subscription__c
+            WHERE Id = :s.Id
         ];
         Assert.areEqual(12.00, out.MonthlyPrice__c);
         Assert.areEqual('Active', out.Status__c);

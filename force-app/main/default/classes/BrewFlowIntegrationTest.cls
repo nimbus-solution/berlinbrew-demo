@@ -37,15 +37,20 @@ private class BrewFlowIntegrationTest {
         Account a = new Account(Name = 'Roaster HQ', Website = 'roaster.de');
         insert a;
         Account out = [SELECT Industry, Website, Description FROM Account WHERE Id = :a.Id];
-        Assert.isTrue(out.Industry == 'Coffee' && out.Website.startsWith('https://') && out.Description != null,
+        Assert.isTrue(
+            out.Industry == 'Coffee' && out.Website.startsWith('https://') && out.Description != null,
             'Flow writes + trigger writes must both persist; got Industry=' + out.Industry
-            + ' Website=' + out.Website + ' Description=' + out.Description);
+                + ' Website=' + out.Website
+                + ' Description=' + out.Description
+        );
     }
 
     @IsTest
     static void bulk_insert_flowFiresPerRecord() {
         List<Account> batch = new List<Account>();
-        for (Integer i = 0; i < 50; i++) batch.add(new Account(Name = 'Cafe ' + i));
+        for (Integer i = 0; i < 50; i++) {
+            batch.add(new Account(Name = 'Cafe ' + i));
+        }
         insert batch;
         Integer industryCount = [SELECT COUNT() FROM Account WHERE Industry = 'Coffee' AND Name LIKE 'Cafe %'];
         Assert.areEqual(50, industryCount);

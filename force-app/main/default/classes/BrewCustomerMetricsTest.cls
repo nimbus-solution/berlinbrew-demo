@@ -15,9 +15,38 @@ private class BrewCustomerMetricsTest {
         insert p;
 
         List<Subscription__c> subs = new List<Subscription__c>();
-        for (Integer i = 0; i < 3; i++) subs.add(new Subscription__c(Account__c = accts[i].Id, Product__c = p.Id, Cadence__c = 'Monthly',   Status__c = 'Active',    StartDate__c = Date.today(), MonthlyPrice__c = 10, NextDeliveryDate__c = Date.today().addDays(7)));
-        for (Integer i = 0; i < 2; i++) subs.add(new Subscription__c(Account__c = accts[i].Id, Product__c = p.Id, Cadence__c = 'Quarterly', Status__c = 'Active',    StartDate__c = Date.today(), MonthlyPrice__c = 27, NextDeliveryDate__c = Date.today().addDays(30)));
-        for (Integer i = 0; i < 2; i++) subs.add(new Subscription__c(Account__c = accts[i].Id, Product__c = p.Id, Cadence__c = 'Monthly',   Status__c = 'Cancelled', StartDate__c = Date.today(), MonthlyPrice__c = 10));
+        for (Integer i = 0; i < 3; i++) {
+            subs.add(new Subscription__c(
+                Account__c = accts[i].Id,
+                Product__c = p.Id,
+                Cadence__c = 'Monthly',
+                Status__c = 'Active',
+                StartDate__c = Date.today(),
+                MonthlyPrice__c = 10,
+                NextDeliveryDate__c = Date.today().addDays(7)
+            ));
+        }
+        for (Integer i = 0; i < 2; i++) {
+            subs.add(new Subscription__c(
+                Account__c = accts[i].Id,
+                Product__c = p.Id,
+                Cadence__c = 'Quarterly',
+                Status__c = 'Active',
+                StartDate__c = Date.today(),
+                MonthlyPrice__c = 27,
+                NextDeliveryDate__c = Date.today().addDays(30)
+            ));
+        }
+        for (Integer i = 0; i < 2; i++) {
+            subs.add(new Subscription__c(
+                Account__c = accts[i].Id,
+                Product__c = p.Id,
+                Cadence__c = 'Monthly',
+                Status__c = 'Cancelled',
+                StartDate__c = Date.today(),
+                MonthlyPrice__c = 10
+            ));
+        }
         insert subs;
     }
 
@@ -57,7 +86,9 @@ private class BrewCustomerMetricsTest {
     static void churnByCadence_producesRates() {
         List<BrewCustomerMetrics.ChurnMetric> rows = BrewCustomerMetrics.churnByCadence();
         Map<String, BrewCustomerMetrics.ChurnMetric> byC = new Map<String, BrewCustomerMetrics.ChurnMetric>();
-        for (BrewCustomerMetrics.ChurnMetric m : rows) byC.put(m.cadence, m);
+        for (BrewCustomerMetrics.ChurnMetric m : rows) {
+            byC.put(m.cadence, m);
+        }
         Assert.areEqual(3, byC.get('Monthly').activeCount);
         Assert.areEqual(2, byC.get('Monthly').churnedCount);
         Assert.areEqual(40.00, byC.get('Monthly').churnRate);
@@ -77,7 +108,9 @@ private class BrewCustomerMetricsTest {
 
     private static Map<String, BrewCustomerMetrics.TierRollup> rollupByTier() {
         Map<String, BrewCustomerMetrics.TierRollup> byTier = new Map<String, BrewCustomerMetrics.TierRollup>();
-        for (BrewCustomerMetrics.TierRollup r : BrewCustomerMetrics.byTier()) byTier.put(r.tier, r);
+        for (BrewCustomerMetrics.TierRollup r : BrewCustomerMetrics.byTier()) {
+            byTier.put(r.tier, r);
+        }
         return byTier;
     }
 

@@ -30,9 +30,24 @@ private class BrewSharedSetupTest {
         // that need to verify metric aggregation, tier-based pricing,
         // and bulk-DML behavior.
         List<Account> accounts = new List<Account>{
-            new Account(Name = 'Cafe Alpha',   LifetimeValue__c = 500.00,  LoyaltyPoints__c = 200, LoyaltyTier__c = 'Silver'),
-            new Account(Name = 'Cafe Beta',    LifetimeValue__c = 1500.00, LoyaltyPoints__c = 800, LoyaltyTier__c = 'Gold'),
-            new Account(Name = 'Cafe Gamma',   LifetimeValue__c = 2500.00, LoyaltyPoints__c = 2000, LoyaltyTier__c = 'Platinum')
+            new Account(
+                Name = 'Cafe Alpha',
+                LifetimeValue__c = 500.00,
+                LoyaltyPoints__c = 200,
+                LoyaltyTier__c = 'Silver'
+            ),
+            new Account(
+                Name = 'Cafe Beta',
+                LifetimeValue__c = 1500.00,
+                LoyaltyPoints__c = 800,
+                LoyaltyTier__c = 'Gold'
+            ),
+            new Account(
+                Name = 'Cafe Gamma',
+                LifetimeValue__c = 2500.00,
+                LoyaltyPoints__c = 2000,
+                LoyaltyTier__c = 'Platinum'
+            )
         };
         insert accounts;
 
@@ -89,7 +104,11 @@ private class BrewSharedSetupTest {
         // test's insert was rolled back), then mutate again.
         List<Account> accs = [SELECT Id, LoyaltyTier__c FROM Account WHERE Name = 'Cafe Beta'];
         Assert.areEqual(1, accs.size());
-        Assert.areEqual('Gold', accs[0].LoyaltyTier__c, 'should be Gold from setup, not whatever previous test changed');
+        Assert.areEqual(
+            'Gold',
+            accs[0].LoyaltyTier__c,
+            'should be Gold from setup, not whatever previous test changed'
+        );
 
         accs[0].LoyaltyTier__c = 'Bronze';
         update accs[0];
