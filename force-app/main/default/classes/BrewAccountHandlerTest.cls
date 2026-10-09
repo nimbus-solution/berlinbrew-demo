@@ -43,7 +43,7 @@ private class BrewAccountHandlerTest {
     @IsTest
     static void update_negativeLifetimeValue_putsAccountOnCreditHold() {
         Account a = BrewTestFactory.account('A');
-        a.LifetimeValue__c = -10;
+        a.LifetimeValue__c = -150;
         update a;
         Account out = [SELECT OnCreditHold__c, CreditHoldReason__c FROM Account WHERE Id = :a.Id];
         Assert.areEqual(true, out.OnCreditHold__c);
